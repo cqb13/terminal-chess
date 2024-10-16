@@ -15,16 +15,16 @@ public class Piece {
         public final char whiteChar;
         public final char blackChar;
 
-        Type(char whiteChar, char blackChar){
+        Type(char blackChar, char whiteChar){
             this.whiteChar = whiteChar;
             this.blackChar = blackChar;
         }
 
-        char getChar(Color color){
-            if(color == Color.White)
-                return this.whiteChar;
-            else
-                return this.blackChar;
+        String getStr(Color color){
+//            if(color == Color.White)
+                return color.code + this.whiteChar;
+//            else
+//                return color.code + this.blackChar;
         }
 
         //TODO: define function to get piece
@@ -35,7 +35,7 @@ public class Piece {
         this.type = chessPiece;
     }
 
-    public char toStr() {
-        return this.type.getChar(this.color);
+    public String toStr() {
+        return this.type.getStr(this.color);
     }
 }

@@ -17,9 +17,9 @@ public class Square {
         this.piece = piece;
     }
 
-    public char toStr(){
+    public String toStr(){
         if(this.piece == null)
-            return ' ';
+            return " ";
         else
             return this.piece.toStr();
     }
