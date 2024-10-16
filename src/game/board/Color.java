@@ -1,4 +1,4 @@
-package board;
+package game.board;
 /*
 
         final String WHITE_FG = "\u001B[97m";

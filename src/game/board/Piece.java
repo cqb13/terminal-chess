@@ -1,4 +1,4 @@
-package board;
+package game.board;
 
 public class Piece {
     public Color color;
