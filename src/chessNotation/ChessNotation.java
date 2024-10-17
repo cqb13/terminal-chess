@@ -45,8 +45,8 @@ public class ChessNotation {
       return Result.error("Invalid input: column must be between 'a' and 'h'.");
     }
 
-    int originY = parseRow(inputParts[0].trim().split("")[2]);
-    int destinationY = parseRow(inputParts[1].trim().split("")[1]);
+    int originY = 8 - parseRow(inputParts[0].trim().split("")[2]);
+    int destinationY = 8 - parseRow(inputParts[1].trim().split("")[1]);
 
     if (originY == -1 || destinationY == -1) {
       return Result.error("Invalid input: row must be between 1 and 8.");

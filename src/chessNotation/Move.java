@@ -50,7 +50,7 @@ public class Move {
    *
    * Pawns can:
    * - Move forward one square if the destination is empty.
-   * - Move forward two squares from their starting row (row 6 for Player One, row 1 for Player Two).
+   * - Move forward two squares from their starting row (row 1 for Player One, row 6 for Player Two).
    * - Capture diagonally one square forward.
    *
    * @return true if the move is a valid pawn move, false otherwise.
@@ -63,7 +63,7 @@ public class Move {
       return true;
     }
 
-    if (this.originX == this.endX && this.originY == startRow && this.originY + 2 * direction == this.endY) {
+    if (this.originX == this.endX && this.originY == startRow && this.originY  + 2 * direction == this.endY) {
       return true;
     }
 
