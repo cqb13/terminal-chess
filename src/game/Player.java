@@ -1,7 +1,14 @@
 package game;
 
-// Player one is white, and player two is black
+import game.board.Color;
+
 public enum Player {
-    One,
-    Two,
+    One (Color.White),
+    Two (Color.Black);
+
+    public final Color color;
+
+    Player(Color color){
+        this.color = color;
+    }
 }

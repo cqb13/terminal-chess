@@ -1,19 +1,19 @@
 package chessNotation;
 
-import game.board.Piece.Type;
+import game.board.Piece;
 import game.Player;
 
 public class Move {
-  public int originX;
-  public int originY;
+  public int startY;
+  public int startX;
   public int endX;
   public int endY;
-  public Type selectedPiece;
+  public Piece selectedPiece;
   public Player currentPlayer;
 
-  public Move(int originX, int originY, int endX, int endY, Type selectedPiece, Player currentPlayer) {
-    this.originX = originX;
-    this.originY = originY;
+  public Move(int startX, int startY, int endX, int endY, Piece selectedPiece, Player currentPlayer) {
+    this.startX = startX;
+    this.startY = startY;
     this.endX = endX;
     this.endY = endY;
     this.selectedPiece = selectedPiece;
@@ -21,13 +21,13 @@ public class Move {
   }
 
   public boolean possibleMovement() {
-      return switch (this.selectedPiece) {
-          case Type.Knight -> calculateForKnight();
-          case Type.Pawn -> calculateForPawn();
-          case Type.Rook -> calculateForRook();
-          case Type.Bishop -> calculateForBishop();
-          case Type.Queen -> calculateForQueen();
-          case Type.King -> calculateForKing();
+      return switch (this.selectedPiece.getType()) {
+          case Piece.Type.Pawn -> calculateForPawn();
+          case Piece.Type.Rook -> calculateForRook();
+          case Piece.Type.Bishop -> calculateForBishop();
+          case Piece.Type.Queen -> calculateForQueen();
+          case Piece.Type.King -> calculateForKing();
+          case Piece.Type.Knight -> calculateForKnight();
       };
   }
 
@@ -41,8 +41,8 @@ public class Move {
    * @return true if the move is a valid knight move, false otherwise.
    */
   private boolean calculateForKnight() {
-    return (Math.abs(this.originX - this.endX) == 2 && Math.abs(this.originY - this.endY) == 1) ||
-            (Math.abs(this.originX - this.endX) == 1 && Math.abs(this.originY - this.endY) == 2);
+    return (Math.abs(this.startX - this.endX) == 2 && Math.abs(this.startY - this.endY) == 1) ||
+            (Math.abs(this.startX - this.endX) == 1 && Math.abs(this.startY - this.endY) == 2);
   }
 
   /**
@@ -59,15 +59,15 @@ public class Move {
     int direction = (this.currentPlayer == Player.One) ? -1 : 1; // Player One moves up, Player Two moves down
     int startRow = (this.currentPlayer == Player.One) ? 6 : 1;
 
-    if (this.originX == this.endX && this.originY + direction == this.endY) {
+    if (this.startX == this.endX && this.startY + direction == this.endY) {
       return true;
     }
 
-    if (this.originX == this.endX && this.originY == startRow && this.originY  + 2 * direction == this.endY) {
+    if (this.startX == this.endX && this.startY == startRow && this.startY + 2 * direction == this.endY) {
       return true;
     }
 
-    return Math.abs(this.originX - this.endX) == 1 && this.originY + direction == this.endY;
+    return Math.abs(this.startX - this.endX) == 1 && this.startY + direction == this.endY;
   }
 
   /**
@@ -78,7 +78,7 @@ public class Move {
    * @return true if the move is a valid rook move, false otherwise.
    */
   private boolean calculateForRook() {
-    return this.originX == this.endX || this.originY == this.endY;
+    return this.startX == this.endX || this.startY == this.endY;
   }
 
   /**
@@ -89,7 +89,7 @@ public class Move {
    * @return true if the move is a valid bishop move, false otherwise.
    */
   private boolean calculateForBishop() {
-    return Math.abs(this.originX - this.endX) == Math.abs(this.originY - this.endY);
+    return Math.abs(this.startX - this.endX) == Math.abs(this.startY - this.endY);
   }
 
   /**
@@ -112,6 +112,6 @@ public class Move {
    * @return true if the move is a valid king move, false otherwise.
    */
   private boolean calculateForKing() {
-    return Math.abs(this.originX - this.endX) <= 1 && Math.abs(this.originY - this.endY) <= 1;
+    return Math.abs(this.startX - this.endX) <= 1 && Math.abs(this.startY - this.endY) <= 1;
   }
 }

@@ -5,29 +5,26 @@ public class Piece {
     public Type type;
 
     public enum Type {
-        King ('♔', '♚'),
-        Queen ('♕', '♛'),
-        Rook ('♖', '♜'),
-        Bishop ('♗', '♝'),
-        Knight ('♘', '♞'),
-        Pawn ('♙', '♟');
+        King ('♚'),
+        Queen ('♛'),
+        Rook ('♜'),
+        Bishop ('♝'),
+        Knight ('♞'),
+        Pawn ('♟');
 
-        public final char whiteChar;
-        public final char blackChar;
+        public final char character;
 
-        Type(char blackChar, char whiteChar){
-            this.whiteChar = whiteChar;
-            this.blackChar = blackChar;
+        Type(char character){
+            this.character = character;
         }
 
         String getStr(Color color){
-//            if(color == Color.White)
-                return color.code + this.whiteChar;
-//            else
-//                return color.code + this.blackChar;
+            return color.code + this.character;
         }
+    }
 
-        //TODO: define function to get piece
+    public Type getType() {
+        return this.type;
     }
 
     public Piece(Color color, Type chessPiece) {

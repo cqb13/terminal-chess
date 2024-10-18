@@ -1,7 +1,8 @@
 package chessNotation;
 
 import game.Player;
-import game.board.Piece.Type;
+import game.board.Color;
+import game.board.Piece;
 import utils.Result;
 public class ChessNotation {
   /**
@@ -52,7 +53,7 @@ public class ChessNotation {
       return Result.error("Invalid input: row must be between 1 and 8.");
     }
 
-    Type selectedPiece = determinePiece(inputParts[0].trim().split("")[0]);
+    Piece selectedPiece = determinePiece(inputParts[0].trim().split("")[0], currentPlayer.color);
 
     if (selectedPiece == null) {
       return Result.error("Invalid input: K for king, Q for queen, R for rook, B for bishop, N for knight, P for pawn");
@@ -61,14 +62,14 @@ public class ChessNotation {
     return Result.success(new Move(originX, originY, destinationX, destinationY, selectedPiece, currentPlayer));
   }
 
-  private static Type determinePiece(String value) {
+  private static Piece determinePiece(String value, Color color) {
     return switch (value) {
-      case "K" -> Type.King;
-      case "Q" -> Type.Queen;
-      case "R" -> Type.Rook;
-      case "B" -> Type.Bishop;
-      case "N" -> Type.Knight;
-      case "P" -> Type.Pawn;
+      case "K" -> new Piece(color, Piece.Type.King);
+      case "Q" -> new Piece(color, Piece.Type.Queen);
+      case "R" -> new Piece(color, Piece.Type.Rook);
+      case "B" -> new Piece(color, Piece.Type.Bishop);
+      case "N" -> new Piece(color, Piece.Type.Knight);
+      case "P" -> new Piece(color, Piece.Type.Pawn);
       default -> null;
     };
   }

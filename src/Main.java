@@ -24,21 +24,17 @@ public class Main {
         Move move = result.getValue();
         boolean possible = move.possibleMovement();
         if(possible && board.validMove(move)) {
-          //TODO: ensure a piece doesn't capture a piece of the same color
           if(board.getPiece(move.endX, move.endY) != null){
             //capture
-            System.out.println("capture");
-            System.out.println(move.originY + " " + move.originX);
-            Piece movingPiece = board.getPiece(move.originX, move.originY);
+            Piece movingPiece = board.getPiece(move.startX, move.startY);
             System.out.println(movingPiece.toStr());
             board.setPiece(move.endX, move.endY, movingPiece);
-            board.setPiece(move.originX, move.originY, null);
+            board.setPiece(move.startX, move.startY, null);
           } else {
-            System.out.println(move.originY + " " + move.originX);
-            Piece movingPiece = board.getPiece(move.originX, move.originY);
+            Piece movingPiece = board.getPiece(move.startX, move.startY);
             System.out.println(movingPiece.toStr());
             board.setPiece(move.endX, move.endY, movingPiece);
-            board.setPiece(move.originX, move.originY, null);
+            board.setPiece(move.startX, move.startY, null);
           }
           //clear console
           board.printBoard();
