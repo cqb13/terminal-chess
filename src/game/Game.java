@@ -35,17 +35,7 @@ public class Game {
         if (result.isSuccess()) {
             Move move = result.getValue();
             boolean possible = move.possibleMovement();
-            if(possible && this.board.validMove(move)) {
-                //TODO: move move logic into Board.java
-                Piece movingPiece = this.board.getPiece(move.startX, move.startY);
-                System.out.println(movingPiece.toStr());
-                this.board.setPiece(move.endX, move.endY, movingPiece);
-                this.board.setPiece(move.startX, move.startY, null);
-
-                if (move.selectedPiece.getType() == Piece.Type.King) {
-                    this.board.updateKingPosition(move.endX, move.endY, move.currentPlayer);
-                }
-
+            if(this.board.movePiece(move)) {
                 //clear console
                 this.board.printBoard();
                 if (this.currentPlayer == Player.One) {
@@ -54,7 +44,7 @@ public class Game {
                     this.currentPlayer = Player.One;
                 }
             } else {
-                System.out.println("no");
+                System.out.println("failed to move");
                 if(!possible){
                     System.out.println("not possible");
                 }

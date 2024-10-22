@@ -3,59 +3,85 @@ package game.board;
 import chessNotation.Move;
 import game.Player;
 
+import java.util.Arrays;
+
 public class Board {
     private final Square[][] board;
-    public int whiteKingX;
-    public int whiteKingY;
-    public int blackKingX;
-    public int blackKingY;
+    private int whiteKingX;
+    private int whiteKingY;
+    private int blackKingX;
+    private int blackKingY;
+    private boolean whiteInCheck = false;
+    private boolean blackInCheck = false;
 
     public Board() {
-        Square[][] board = new Square[8][8];
-        int boardSize = 8;
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                board[i][j] = new Square();
+        this.board = new Square[8][8];
+        final int BOARD_SIZE = 8;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                this.board[i][j] = new Square();
             }
             if (i == 0) {
-                for (int j = 0; j < boardSize; j++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
                     if (j == 0 || j == 7) {
-                        board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Rook));
+                        this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Rook));
                     } else if (j == 1 || j == 6) {
-                        board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Knight));
+                        this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Knight));
                     } else if (j == 2 || j == 5) {
-                        board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Bishop));
+                        this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Bishop));
                     } else if (j == 3) {
-                        board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Queen));
+                        this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Queen));
                     } else {
-                        board[i][j].setPiece(new Piece(Color.Black, Piece.Type.King));
+                        this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.King));
                     }
                 }
             } else if (i == 1) {
-                for (int j = 0; j < boardSize; j++) {
-                    board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Pawn));
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Pawn));
                 }
             } else if (i == 6) {
-                for (int j = 0; j < boardSize; j++) {
-                    board[i][j].setPiece(new Piece(Color.White, Piece.Type.Pawn));
+                for (int j = 0; j < BOARD_SIZE; j++) {
+                    this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Pawn));
                 }
             } else if (i == 7) {
-                for (int j = 0; j < boardSize; j++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
                     if (j == 0 || j == 7) {
-                        board[i][j].setPiece(new Piece(Color.White, Piece.Type.Rook));
+                        this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Rook));
                     } else if (j == 1 || j == 6) {
-                        board[i][j].setPiece(new Piece(Color.White, Piece.Type.Knight));
+                        this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Knight));
                     } else if (j == 2 || j == 5) {
-                        board[i][j].setPiece(new Piece(Color.White, Piece.Type.Bishop));
+                        this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Bishop));
                     } else if (j == 3) {
-                        board[i][j].setPiece(new Piece(Color.White, Piece.Type.Queen));
+                        this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Queen));
                     } else {
-                        board[i][j].setPiece(new Piece(Color.White, Piece.Type.King));
+                        this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.King));
                     }
                 }
             }
         }
-        this.board = board;
+    }
+
+    public boolean movePiece(Move move) {
+        boolean moveIsAllowed = simulateMove(move);
+        if(!moveIsAllowed){
+            System.out.println("sim move not allowed");
+            return false;
+        }
+        System.out.println(move.startX + " " + move.startY);
+
+        for (Square square : this.board[move.startY]) {
+            System.out.print(square.toStr() + ", ");
+        }
+        Piece movingPiece = this.getPiece(move.startX, move.startY);
+        System.out.println(movingPiece.toStr());
+        this.setPiece(move.endX, move.endY, movingPiece);
+        this.setPiece(move.startX, move.startY, null);
+
+        if (move.selectedPiece.getType() == Piece.Type.King) {
+            System.out.println("moving king");
+            this.updateKingPosition(move.endX, move.endY, move.currentPlayer);
+        }
+        return true;
     }
 
     public boolean playerWon() {
@@ -63,11 +89,11 @@ public class Board {
     }
 
     public Piece getPiece(int x, int y) {
-        return this.board[y][x].piece;
+        return board[y][x].piece;
     }
 
     public void setPiece(int x, int y, Piece piece) {
-        this.board[y][x].setPiece(piece);
+        board[y][x].setPiece(piece);
     }
 
     public void updateKingPosition(int x, int y, Player player) {
@@ -75,9 +101,11 @@ public class Board {
             case One:
                 this.whiteKingX = x;
                 this.whiteKingY = y;
+                break;
             case Two:
                 this.blackKingX = x;
                 this.blackKingY = y;
+
         }
     }
 
@@ -88,8 +116,6 @@ public class Board {
             return false;
         }
         switch (move.selectedPiece.getType()){
-            case King:
-                return (destinationPiece == null || destinationPiece.color != targetPiece.color) && !isCheck(move.currentPlayer, move.endX, move.endY);
             case Pawn:
                 if(move.endX == move.startX) {
                     return destinationPiece == null && piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY);
@@ -100,6 +126,7 @@ public class Board {
             case Queen:
             case Bishop:
                 return (destinationPiece == null || destinationPiece.color != targetPiece.color) && piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY);
+            case King:
             case Knight:
                 return destinationPiece == null || destinationPiece.color != targetPiece.color;
             default:
@@ -160,22 +187,52 @@ public class Board {
         return true;
     }
 
+    private boolean simulateMove(Move move){
+        if(!move.possibleMovement() || !this.validMove(move)){
+            return false;
+        }
+
+        Piece movingPiece = this.getPiece(move.startX, move.startY);
+        Piece takenPiece = this.getPiece(move.endX, move.endY);
+        this.board[move.endY][move.endX].setPiece(movingPiece);
+        this.board[move.startY][move.startX].setPiece(null);
+
+        boolean movedIntoCheck = isCheck(move.currentPlayer, this.board);
+        if(movedIntoCheck){
+            System.out.println("nope thats check");
+            this.board[move.startY][move.startX].setPiece(movingPiece);
+            this.board[move.endY][move.endX].setPiece(takenPiece);
+            return false;
+        }
+        
+        if(move.currentPlayer == Player.One){
+            this.blackInCheck = isCheck(Player.Two, this.board);
+        } else {
+            this.whiteInCheck = isCheck(Player.One, this.board);
+        }
+        System.out.println("black: " + this.blackInCheck);
+        System.out.println("white: " + this.whiteInCheck);
+        this.board[move.startY][move.startX].setPiece(movingPiece);
+        this.board[move.endY][move.endX].setPiece(takenPiece);
+        return true;
+    }
+
     //TODO
-    private boolean isCheck(Player player) {
+    private boolean isCheck(Player player, Square[][] testBoard) {
         Player otherPlayer;
         int kingX, kingY;
         if(player == Player.One) {
             otherPlayer = Player.Two;
-            kingX = this.whiteKingX;
-            kingY = this.whiteKingY;
+            kingX = whiteKingX;
+            kingY = whiteKingY;
         } else {
             otherPlayer = Player.One;
-            kingX = this.blackKingX;
-            kingY = this.blackKingY;
+            kingX = blackKingX;
+            kingY = blackKingY;
         }
         for(int y = 0; y < 8; y++){
             for(int x = 0; x < 8; x++){
-                Piece currentPiece = this.board[y][x].piece;
+                Piece currentPiece = testBoard[y][x].piece;
                 if(currentPiece == null || currentPiece.color == player.color){
                     continue;
                 }

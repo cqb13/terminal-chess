@@ -7,10 +7,6 @@ public class Square {
 
   }
 
-  public void setPiece() {
-    this.piece = null;
-  }
-
   public void setPiece(Piece piece) {
     this.piece = piece;
   }
