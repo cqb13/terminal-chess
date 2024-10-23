@@ -22,7 +22,7 @@ public class Board {
     public void whiteMovedKing() {
         this.whiteMovedKing = true;
     }
-    
+
     public void blackMovedKing() {
         this.blackMovedKing = true;
     }
@@ -266,7 +266,6 @@ public class Board {
         return true;
     }
 
-    //TODO
     private boolean isCheck(Player player) {
         Player otherPlayer;
         int kingX, kingY;
@@ -287,29 +286,6 @@ public class Board {
                     continue;
                 }
                 Move testMove = new Move(x, y, kingX, kingY, currentPiece, otherPlayer);
-                if(testMove.possibleMovement() && this.validMove(testMove)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    //TODO
-    private boolean isCheck(Player player, int endX, int endY) {
-        Player otherPlayer;
-        if(player == Player.One) {
-            otherPlayer = Player.Two;
-        } else {
-            otherPlayer = Player.One;
-        }
-        for(int y = 0; y < 8; y++){
-            for(int x = 0; x < 8; x++){
-                Piece currentPiece = this.board[y][x].piece;
-                if(currentPiece == null || currentPiece.color == player.color){
-                    continue;
-                }
-                Move testMove = new Move(x, y, endX, endY, currentPiece, otherPlayer);
                 if(testMove.possibleMovement() && this.validMove(testMove)) {
                     return true;
                 }
