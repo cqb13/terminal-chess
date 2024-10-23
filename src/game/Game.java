@@ -9,14 +9,6 @@ import utils.Result;
 import java.util.Scanner;
 
 public class Game {
-    private boolean whiteMovedKing = false;
-    private boolean whiteMovedLeftRook = false;
-    private boolean whiteMovedRightRook = false;
-
-    private boolean blackMovedKing = false;
-    private boolean blackMovedLeftRook = false;
-    private boolean blackMovedRightRook = false;
-
     private Player currentPlayer = Player.One;
 
     private final Board board;
@@ -42,6 +34,31 @@ public class Game {
                     this.currentPlayer = Player.Two;
                 } else {
                     this.currentPlayer = Player.One;
+                }
+
+                if (move.selectedPiece.getType() == Piece.Type.King) {
+                    if (move.currentPlayer == Player.One) {
+                        board.whiteMovedKing();
+                    } else if (move.currentPlayer == Player.Two) {
+                        board.blackMovedKing();
+                    }
+                }
+
+                // Checks if a rook is moved from its starting location
+                if (move.currentPlayer == Player.One && move.selectedPiece.getType() == Piece.Type.Rook) {
+                    if (move.startX == 0 && move.startY == 7) {
+                        board.whiteMovedLeftRook();
+                    } else if (move.startX == 7 && move.startY == 7) {
+                        board.whiteMovedRightRook();
+                    }
+                }
+
+                if (move.currentPlayer == Player.Two && move.selectedPiece.getType() == Piece.Type.Rook) {
+                    if (move.startX == 0 && move.startY == 0) {
+                        board.blackMovedLeftRook();
+                    } else if (move.startX == 7 && move.startY == 0) {
+                        board.blackMovedRightRook();
+                    }
                 }
             } else {
                 System.out.println("failed to move");
