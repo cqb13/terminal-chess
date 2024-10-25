@@ -25,7 +25,7 @@ public class ChessNotation {
    *  - 1...8 = 0...7
    */
   public static Result<Move> getMovePosition(String input, Player currentPlayer) {
-    String[] inputParts = input.split("->");
+    String[] inputParts = input.split(" ");
 
     if (inputParts.length != 2) {
       return Result.error("Invalid input: must be in the format '[piece][letter][number] (Ke1) -> [letter][number] (e2)'.");

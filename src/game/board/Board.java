@@ -55,11 +55,11 @@ public class Board {
                 }
             } else if (i == 1) {
                 for (int j = 0; j < BOARD_SIZE; j++) {
-                    this.board[i][j].setPiece(new Piece(Color.Black, Piece.Type.Pawn));
+                    this.setPiece(j, i, new Piece(Color.Black, Piece.Type.Pawn));
                 }
             } else if (i == 6) {
                 for (int j = 0; j < BOARD_SIZE; j++) {
-                    this.board[i][j].setPiece(new Piece(Color.White, Piece.Type.Pawn));
+                    this.setPiece(j, i, new Piece(Color.White, Piece.Type.Pawn));
                 }
             } else if (i == 7) {
                 this.populateRow(Color.White, 7);
@@ -70,15 +70,15 @@ public class Board {
     private void populateRow(Color color, int row) {
         for (int x = 0; x < BOARD_SIZE; x++) {
             if (x == 0 || x == 7) {
-                this.board[row][x].setPiece(new Piece(color, Piece.Type.Rook));
+                this.setPiece(x, row, new Piece(color, Piece.Type.Rook));
             } else if (x == 1 || x == 6) {
-                this.board[row][x].setPiece(new Piece(color, Piece.Type.Knight));
+                this.setPiece(x, row, new Piece(color, Piece.Type.Knight));
             } else if (x == 2 || x == 5) {
-                this.board[row][x].setPiece(new Piece(color, Piece.Type.Bishop));
+                this.setPiece(x, row, new Piece(color, Piece.Type.Bishop));
             } else if (x == 3) {
-                this.board[row][x].setPiece(new Piece(color, Piece.Type.Queen));
+                this.setPiece(x, row, new Piece(color, Piece.Type.Queen));
             } else {
-                this.board[row][x].setPiece(new Piece(color, Piece.Type.King));
+                this.setPiece(x, row, new Piece(color, Piece.Type.King));
             }
         }
     }
@@ -110,7 +110,7 @@ public class Board {
         return false;
     }
 
-    public Piece getPiece(int x, int y) {
+    private Piece getPiece(int x, int y) {
         return board[y][x].piece;
     }
 
@@ -132,8 +132,8 @@ public class Board {
     }
 
     public boolean validMove(Move move) {
-        Piece destinationPiece = this.board[move.endY][move.endX].piece;
-        Piece targetPiece = this.board[move.startY][move.startX].piece;
+        Piece destinationPiece = this.getPiece(move.endX, move.endY);
+        Piece targetPiece = this.getPiece(move.startX, move.startY);
         if (targetPiece == null || targetPiece.color != move.currentPlayer.color) {
             return false;
         }
@@ -163,7 +163,8 @@ public class Board {
             int end = Math.max(startY, endY);
 
             for (int y = start; y < end; y++) {
-                if (this.board[y][startX].piece != null) {
+                System.out.println("Piece is scanning (" + this.getNotation(startX, y) + ")");
+                if (this.getPiece(startX, y) != null) {
                     return true;
                 }
             }
@@ -172,7 +173,7 @@ public class Board {
             int start = Math.min(startX, endX) + 1;
             int end = Math.max(startX, endX);
             for (int x = start; x < end; x++) {
-                if (this.board[startY][x].piece != null) {
+                if (this.getPiece(x, startY) != null) {
                     return true;
                 }
             }
@@ -189,17 +190,17 @@ public class Board {
             scanEndX = Math.max(startX, endX);
             if (slope > 0) {
                 // low x and y to high x and y
-                scanStartY = Math.min(startY, endY);
+                scanStartY = Math.min(startY, endY) + 1;
                 yModifier = 1;
 
             } else {
                 // low x and high y to high x and low y
-                scanStartY = Math.max(startY, endY);
+                scanStartY = Math.max(startY, endY) -1;
                 yModifier = -1;
             }
 
             for(int i = 0; i < scanEndX - scanStartX; i++){
-                if(this.board[scanStartX + i][scanStartY + i * yModifier].piece != null) {
+                if (this.getPiece(scanStartX + i, scanStartY + i * yModifier) != null) {
                     return true;
                 }
             }
@@ -215,9 +216,9 @@ public class Board {
         }
 
         Piece movingPiece = this.getPiece(move.startX, move.startY);
-        this.board[move.endY][move.endX].setPiece(movingPiece);
+        this.setPiece(move.endX, move.endY, movingPiece);
         Piece takenPiece = this.getPiece(move.endX, move.endY);
-        this.board[move.startY][move.startX].setPiece(null);
+        this.setPiece(move.startX, move.startY, null);
         if(movingPiece.type == Piece.Type.King){
             if(move.currentPlayer == Player.One){
                 this.whiteKingX = move.endX;
@@ -230,9 +231,9 @@ public class Board {
 
         boolean movedIntoCheck = isCheck(move.currentPlayer);
         if(movedIntoCheck){
-            System.out.println("nope thats check");
-            this.board[move.startY][move.startX].setPiece(movingPiece);
-            this.board[move.endY][move.endX].setPiece(takenPiece);
+            System.out.println("nope that's check");
+            this.setPiece(move.startX, move.startY, movingPiece);
+            this.setPiece(move.endX, move.endY,takenPiece);
             if(movingPiece.type == Piece.Type.King){
                 if(move.currentPlayer == Player.One){
                     this.whiteKingX = move.startX;
@@ -252,8 +253,8 @@ public class Board {
         }
         System.out.println("black: " + this.blackInCheck);
         System.out.println("white: " + this.whiteInCheck);
-        this.board[move.startY][move.startX].setPiece(movingPiece);
-        this.board[move.endY][move.endX].setPiece(takenPiece);
+        this.setPiece(move.startX, move.startY, movingPiece);
+        this.setPiece(move.endX, move.endY,takenPiece);
         if(movingPiece.type == Piece.Type.King){
             if(move.currentPlayer == Player.One){
                 this.whiteKingX = move.startX;
@@ -281,7 +282,7 @@ public class Board {
 
         for(int y = 0; y < 8; y++){
             for(int x = 0; x < 8; x++){
-                Piece currentPiece = this.board[y][x].piece;
+                Piece currentPiece = this.getPiece(x, y);
                 if(currentPiece == null || currentPiece.color == player.color){
                     continue;
                 }
@@ -314,5 +315,9 @@ public class Board {
             System.out.println(RESET);
         }
         System.out.println("   a  b  c  d  e  f  g  h");
+    }
+
+    public String getNotation(int x, int y){
+        return new String[]{"a", "b", "c", "d", "e", "f", "g", "h"}[x] + (8 - y);
     }
 }
