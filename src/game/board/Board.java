@@ -149,6 +149,30 @@ public class Board {
             case Bishop:
                 return (destinationPiece == null || destinationPiece.color != targetPiece.color) && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY);
             case King:
+                if(Math.abs(move.startX - move.endX) <= 1 && Math.abs(move.startY - move.endY) <= 1){
+                    //castling
+                    /**
+                     *                 if (move.currentPlayer == Player.One && move.selectedPiece.getType() == Piece.Type.Rook) {
+                     *                     if (move.startX == 0 && move.startY == 7) {
+                     *                         board.whiteMovedLeftRook();
+                     *                     } else if (move.startX == 7 && move.startY == 7) {
+                     *                         board.whiteMovedRightRook();
+                     *                     }
+                     *                 }
+                     *
+                     *                 if (move.currentPlayer == Player.Two && move.selectedPiece.getType() == Piece.Type.Rook) {
+                     *                     if (move.startX == 0 && move.startY == 0) {
+                     *                         board.blackMovedLeftRook();
+                     *                     } else if (move.startX == 7 && move.startY == 0) {
+                     *                         board.blackMovedRightRook();
+                     *                     }
+                     *                 }
+                     */
+
+                    if (move.currentPlayer == Player.One) {
+                        //TODO
+                    }
+                }
             case Knight:
                 return destinationPiece == null || destinationPiece.color != targetPiece.color;
             default:
