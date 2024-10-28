@@ -72,9 +72,9 @@ public class Board {
             if (x == 0 || x == 7) {
                 this.setPiece(x, row, new Piece(color, Piece.Type.Rook));
             } else if (x == 1 || x == 6) {
-                this.setPiece(x, row, new Piece(color, Piece.Type.Knight));
+                //this.setPiece(x, row, new Piece(color, Piece.Type.Knight));
             } else if (x == 2 || x == 5) {
-                this.setPiece(x, row, new Piece(color, Piece.Type.Bishop));
+                //this.setPiece(x, row, new Piece(color, Piece.Type.Bishop));
             } else if (x == 3) {
                 this.setPiece(x, row, new Piece(color, Piece.Type.Queen));
             } else {
@@ -86,21 +86,32 @@ public class Board {
     public boolean movePiece(Move move) {
         boolean moveIsAllowed = simulateMove(move);
         if(!moveIsAllowed){
-            System.out.println("sim move not allowed");
             return false;
         }
-        System.out.println(move.startX + " " + move.startY);
 
-        for (Square square : this.board[move.startY]) {
-            System.out.print(square.toStr() + ", ");
-        }
         Piece movingPiece = this.getPiece(move.startX, move.startY);
-        System.out.println(movingPiece.toStr());
-        this.setPiece(move.endX, move.endY, movingPiece);
-        this.setPiece(move.startX, move.startY, null);
+
+        if (move.isCastling()) {
+            int y = (move.currentPlayer == Player.One) ? 7 : 0;
+            Piece rook = (move.currentPlayer == Player.One) ? new Piece(Color.White, Piece.Type.Rook) : new Piece(Color.Black, Piece.Type.Rook);
+
+            this.setPiece(move.endX, move.endY, null);
+            this.setPiece(move.startX, move.startY, null);
+            boolean kingSide = move.endX > move.startX;
+
+            if (kingSide) {
+                this.setPiece(5, y, rook);
+                this.setPiece(6, y, movingPiece);
+            } else {
+                this.setPiece(3, y, rook);
+                this.setPiece(2, y, movingPiece);
+            }
+        } else {
+            this.setPiece(move.endX, move.endY, movingPiece);
+            this.setPiece(move.startX, move.startY, null);
+        }
 
         if (move.selectedPiece.getType() == Piece.Type.King) {
-            System.out.println("moving king");
             this.updateKingPosition(move.endX, move.endY, move.currentPlayer);
         }
         return true;
@@ -230,17 +241,63 @@ public class Board {
             return false;
         }
 
-        //TODO modify the move so set the positions to correct positions after the switch
-        //TODO: ensure a king is not in check when the do this, and ensure that the king does not pass through a check when they do this
         if (move.isCastling()) {
-            int y;
-            if (move.currentPlayer == Player.One) {
-                y = 7;
-            } else {
-                y = 0;
+            if (isCheck(move.currentPlayer)) {
+                return false;
             }
 
-            // castle left
+            int y = (move.currentPlayer == Player.One) ? 7 : 0;
+            boolean kingSide = move.endX > move.startX;
+
+            // Test if king moves through check during castling
+            // For kingside castling, check squares f1/f8 and g1/g8
+            // For queenside castling, check squares d1/d8 and c1/c8
+            int[] squaresToCheck = kingSide ?
+                    new int[]{5, 6} :  // kingside: f and g files
+                    new int[]{3, 2};   // queenside: d and c files
+
+            Piece king = this.getPiece(move.startX, move.startY);
+            this.setPiece(move.startX, move.startY, null);
+
+            for (int x : squaresToCheck) {
+                // Temporarily place king on each square it moves through
+                this.setPiece(x, y, king);
+                if (move.currentPlayer == Player.One) {
+                    this.whiteKingX = x;
+                    this.whiteKingY = y;
+                } else {
+                    this.blackKingX = x;
+                    this.blackKingY = y;
+                }
+
+                // Check if this square is under attack
+                if (isCheck(move.currentPlayer)) {
+                    this.setPiece(x, y, null);
+                    this.setPiece(move.startX, move.startY, king);
+                    if (move.currentPlayer == Player.One) {
+                        this.whiteKingX = move.startX;
+                        this.whiteKingY = move.startY;
+                    } else {
+                        this.blackKingX = move.startX;
+                        this.blackKingY = move.startY;
+                    }
+                    return false;
+                }
+
+                // Remove king from test square before checking next square
+                this.setPiece(x, y, null);
+            }
+
+            this.setPiece(move.startX, move.startY, king);
+            if (move.currentPlayer == Player.One) {
+                this.whiteKingX = move.startX;
+                this.whiteKingY = move.startY;
+            } else {
+                this.blackKingX = move.startX;
+                this.blackKingY = move.startY;
+            }
+
+            return true;
         }
 
         Piece movingPiece = this.getPiece(move.startX, move.startY);
@@ -320,6 +377,15 @@ public class Board {
                 }
             }
         }
+        return false;
+    }
+
+    public boolean isStalemate(Player player) {
+        if (isCheck(player)) {
+            return false;
+        }
+
+        //TODO Check if player has any legal moves
         return false;
     }
 
