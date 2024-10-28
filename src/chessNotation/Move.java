@@ -112,6 +112,13 @@ public class Move {
    * @return true if the move is a valid king move, false otherwise.
    */
   private boolean calculateForKing() {
+    if (this.currentPlayer == Player.One && this.startX == 4 && this.startY == 7 && this.endY == 7 && (this.endX == 0 || this.endX == 7)) {
+      System.out.println("here");
+      return true;
+    } else if (this.currentPlayer == Player.Two && this.startX == 4 && this.startY == 0 && this.endY == 0 && (this.endX == 0 || this.endX == 7)) {
+      return true;
+    }
+
     return Math.abs(this.startX - this.endX) <= 1 && Math.abs(this.startY - this.endY) <= 1;
   }
 }

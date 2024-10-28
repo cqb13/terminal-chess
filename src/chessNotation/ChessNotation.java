@@ -28,7 +28,7 @@ public class ChessNotation {
     String[] inputParts = input.split(" ");
 
     if (inputParts.length != 2) {
-      return Result.error("Invalid input: must be in the format '[piece][letter][number] (Ke1) -> [letter][number] (e2)'.");
+      return Result.error("Invalid input: must be in the format '[piece][letter][number] (Ke1) [letter][number] (e2)'.");
     }
 
     if (inputParts[0].trim().length() != 3) {

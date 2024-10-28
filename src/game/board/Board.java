@@ -149,28 +149,21 @@ public class Board {
             case Bishop:
                 return (destinationPiece == null || destinationPiece.color != targetPiece.color) && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY);
             case King:
-                if(Math.abs(move.startX - move.endX) <= 1 && Math.abs(move.startY - move.endY) <= 1){
-                    //castling
-                    /**
-                     *                 if (move.currentPlayer == Player.One && move.selectedPiece.getType() == Piece.Type.Rook) {
-                     *                     if (move.startX == 0 && move.startY == 7) {
-                     *                         board.whiteMovedLeftRook();
-                     *                     } else if (move.startX == 7 && move.startY == 7) {
-                     *                         board.whiteMovedRightRook();
-                     *                     }
-                     *                 }
-                     *
-                     *                 if (move.currentPlayer == Player.Two && move.selectedPiece.getType() == Piece.Type.Rook) {
-                     *                     if (move.startX == 0 && move.startY == 0) {
-                     *                         board.blackMovedLeftRook();
-                     *                     } else if (move.startX == 7 && move.startY == 0) {
-                     *                         board.blackMovedRightRook();
-                     *                     }
-                     *                 }
-                     */
+                //TODO: ensure a king is not in check when the do this, and ensure that the king does not pass through a check when they do this
+                //TODO: modify the move to switch the king and rook the the right positions
+                if (move.currentPlayer == Player.One && !this.whiteMovedKing && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY)) {
+                    if (!this.whiteMovedLeftRook && move.endX == 0 && move.endY == 7) {
+                        return true;
+                    } else if (!this.whiteMovedRightRook && move.endX == 7 && move.endY == 7) {
+                        return true;
+                    }
+                }
 
-                    if (move.currentPlayer == Player.One) {
-                        //TODO
+                if (move.currentPlayer == Player.Two && !this.blackMovedKing && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY)) {
+                    if (!this.blackMovedLeftRook && move.endX == 0 && move.endY == 0) {
+                        return true;
+                    } else if (!this.blackMovedRightRook && move.endX == 7 && move.endY == 0) {
+                        return true;
                     }
                 }
             case Knight:
