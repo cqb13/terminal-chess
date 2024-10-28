@@ -149,8 +149,6 @@ public class Board {
             case Bishop:
                 return (destinationPiece == null || destinationPiece.color != targetPiece.color) && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY);
             case King:
-                //TODO: ensure a king is not in check when the do this, and ensure that the king does not pass through a check when they do this
-                //TODO: modify the move to switch the king and rook the the right positions
                 if (move.currentPlayer == Player.One && !this.whiteMovedKing && !piecesBetweenSquares(move.startX, move.startY, move.endX, move.endY)) {
                     if (!this.whiteMovedLeftRook && move.endX == 0 && move.endY == 7) {
                         return true;
@@ -230,6 +228,19 @@ public class Board {
     private boolean simulateMove(Move move){
         if(!move.possibleMovement() || !this.validMove(move)){
             return false;
+        }
+
+        //TODO modify the move so set the positions to correct positions after the switch
+        //TODO: ensure a king is not in check when the do this, and ensure that the king does not pass through a check when they do this
+        if (move.isCastling()) {
+            int y;
+            if (move.currentPlayer == Player.One) {
+                y = 7;
+            } else {
+                y = 0;
+            }
+
+            // castle left
         }
 
         Piece movingPiece = this.getPiece(move.startX, move.startY);
