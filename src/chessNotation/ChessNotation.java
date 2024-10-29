@@ -62,7 +62,7 @@ public class ChessNotation {
     return Result.success(new Move(originX, originY, destinationX, destinationY, selectedPiece, currentPlayer));
   }
 
-  private static Piece determinePiece(String value, Color color) {
+  public static Piece determinePiece(String value, Color color) {
     return switch (value) {
       case "K" -> new Piece(color, Piece.Type.King);
       case "Q" -> new Piece(color, Piece.Type.Queen);

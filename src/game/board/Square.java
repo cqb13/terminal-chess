@@ -11,10 +11,6 @@ public class Square {
     this.piece = piece;
   }
 
-  public boolean hasPiece() {
-      return this.piece != null;
-  }
-
   public String toStr() {
     if (this.piece == null)
       return " ";

@@ -4,18 +4,14 @@ import game.board.Piece;
 import game.Player;
 
 public class Move {
-  public int startY;
-  public int startX;
-  public int endX;
-  public int endY;
+  public Position start;
+  public Position end;
   public Piece selectedPiece;
   public Player currentPlayer;
 
   public Move(int startX, int startY, int endX, int endY, Piece selectedPiece, Player currentPlayer) {
-    this.startX = startX;
-    this.startY = startY;
-    this.endX = endX;
-    this.endY = endY;
+    this.start = new Position(startX, startY);
+    this.end = new Position(endX, endY);
     this.selectedPiece = selectedPiece;
     this.currentPlayer = currentPlayer;
   }
@@ -41,8 +37,8 @@ public class Move {
    * @return true if the move is a valid knight move, false otherwise.
    */
   private boolean calculateForKnight() {
-    return (Math.abs(this.startX - this.endX) == 2 && Math.abs(this.startY - this.endY) == 1) ||
-            (Math.abs(this.startX - this.endX) == 1 && Math.abs(this.startY - this.endY) == 2);
+    return (Math.abs(this.start.x - this.end.x) == 2 && Math.abs(this.start.y - this.end.y) == 1) ||
+            (Math.abs(this.start.x - this.end.x) == 1 && Math.abs(this.start.y - this.end.y) == 2);
   }
 
   /**
@@ -59,15 +55,15 @@ public class Move {
     int direction = (this.currentPlayer == Player.One) ? -1 : 1; // Player One moves up, Player Two moves down
     int startRow = (this.currentPlayer == Player.One) ? 6 : 1;
 
-    if (this.startX == this.endX && this.startY + direction == this.endY) {
+    if (this.start.x == this.end.x && this.start.y + direction == this.end.y) {
       return true;
     }
 
-    if (this.startX == this.endX && this.startY == startRow && this.startY + 2 * direction == this.endY) {
+    if (this.start.x == this.end.x && this.start.y == startRow && this.start.y + 2 * direction == this.end.y) {
       return true;
     }
 
-    return Math.abs(this.startX - this.endX) == 1 && this.startY + direction == this.endY;
+    return Math.abs(this.start.x - this.end.x) == 1 && this.start.y + direction == this.end.y;
   }
 
   /**
@@ -78,7 +74,7 @@ public class Move {
    * @return true if the move is a valid rook move, false otherwise.
    */
   private boolean calculateForRook() {
-    return this.startX == this.endX || this.startY == this.endY;
+    return this.start.x == this.end.x || this.start.y == this.end.y;
   }
 
   /**
@@ -89,7 +85,7 @@ public class Move {
    * @return true if the move is a valid bishop move, false otherwise.
    */
   private boolean calculateForBishop() {
-    return Math.abs(this.startX - this.endX) == Math.abs(this.startY - this.endY);
+    return Math.abs(this.start.x - this.end.x) == Math.abs(this.start.y - this.end.y);
   }
 
   /**
@@ -112,19 +108,19 @@ public class Move {
    * @return true if the move is a valid king move, false otherwise.
    */
   private boolean calculateForKing() {
-    if (this.currentPlayer == Player.One && this.startX == 4 && this.startY == 7 && this.endY == 7 && (this.endX == 0 || this.endX == 7)) {
+    if (this.currentPlayer == Player.One && this.start.x == 4 && this.start.y == 7 && this.end.y == 7 && (this.end.x == 0 || this.end.x == 7)) {
       return true;
-    } else if (this.currentPlayer == Player.Two && this.startX == 4 && this.startY == 0 && this.endY == 0 && (this.endX == 0 || this.endX == 7)) {
+    } else if (this.currentPlayer == Player.Two && this.start.x == 4 && this.start.y == 0 && this.end.y == 0 && (this.end.x == 0 || this.end.x == 7)) {
       return true;
     }
 
-    return Math.abs(this.startX - this.endX) <= 1 && Math.abs(this.startY - this.endY) <= 1;
+    return Math.abs(this.start.x - this.end.x) <= 1 && Math.abs(this.start.y - this.end.y) <= 1;
   }
 
   public boolean isCastling() {
-    if (this.currentPlayer == Player.One && this.startX == 4 && this.startY == 7 && this.endY == 7 && (this.endX == 0 || this.endX == 7)) {
+    if (this.currentPlayer == Player.One && this.start.x == 4 && this.start.y == 7 && this.end.y == 7 && (this.end.x == 0 || this.end.x == 7)) {
       return true;
-    } else if (this.currentPlayer == Player.Two && this.startX == 4 && this.startY == 0 && this.endY == 0 && (this.endX == 0 || this.endX == 7)) {
+    } else if (this.currentPlayer == Player.Two && this.start.x == 4 && this.start.y == 0 && this.end.y == 0 && (this.end.x == 0 || this.end.x == 7)) {
       return true;
     }
     return false;

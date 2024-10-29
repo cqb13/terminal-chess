@@ -3,7 +3,16 @@ import game.Game;
 public class Main {
   public static void main(String[] args) {
     welcome();
-    Game game = new Game();
+    String[] testState = {
+            "rnbqkbnr",
+            "pppppppp",
+            "        ",
+            "        ",
+            "    p   ",
+            "        ",
+            "PPPPPPPP",
+            "RNBQKBNR"};
+    Game game = new Game(testState);
     game.display();
 
     while (!game.playerWon()) {

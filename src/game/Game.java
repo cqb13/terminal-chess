@@ -14,6 +14,12 @@ public class Game {
     private final Board board;
     private final Scanner input;
 
+    public Game(String[] testBoard) {
+        this.board = new Board(testBoard);
+        this.input = new Scanner(System.in);
+    }
+
+
     public Game() {
         this.board = new Board();
         this.input = new Scanner(System.in);
@@ -44,19 +50,23 @@ public class Game {
                     }
                 }
 
+                if (move.selectedPiece.getType() == Piece.Type.Pawn && Math.abs(move.end.y - move.start.y) == 2) {
+                    board.setEnPassantSquare(move.end.x, move.end.y);
+                }
+
                 // Checks if a rook is moved from its starting location
                 if (move.currentPlayer == Player.One && move.selectedPiece.getType() == Piece.Type.Rook) {
-                    if (move.startX == 0 && move.startY == 7) {
+                    if (move.start.x == 0 && move.start.y == 7) {
                         board.whiteMovedLeftRook();
-                    } else if (move.startX == 7 && move.startY == 7) {
+                    } else if (move.start.x == 7 && move.start.y == 7) {
                         board.whiteMovedRightRook();
                     }
                 }
 
                 if (move.currentPlayer == Player.Two && move.selectedPiece.getType() == Piece.Type.Rook) {
-                    if (move.startX == 0 && move.startY == 0) {
+                    if (move.start.x == 0 && move.start.y == 0) {
                         board.blackMovedLeftRook();
-                    } else if (move.startX == 7 && move.startY == 0) {
+                    } else if (move.start.x == 7 && move.start.y == 0) {
                         board.blackMovedRightRook();
                     }
                 }
