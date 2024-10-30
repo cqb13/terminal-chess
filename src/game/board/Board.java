@@ -7,12 +7,8 @@ import game.Player;
 
 public class Board {
     private final Square[][] board;
-    private int whiteKingX = 4;
-    private int whiteKingY = 7;
-    private Position whiteKing = new Position(4, 7);
-    private int blackKingX = 4;
-    private int blackKingY = 0;
-    private Position blackKing = new Position(4, 0);
+    private final Position whiteKing = new Position(4, 7);
+    private final Position blackKing = new Position(4, 0);
     private boolean whiteMovedKing = false;
     private boolean whiteMovedLeftRook = false;
     private boolean whiteMovedRightRook = false;
@@ -21,8 +17,7 @@ public class Board {
     private boolean blackMovedRightRook = false;
     private boolean whiteInCheck = false;
     private boolean blackInCheck = false;
-    private Position enPassantSquare;
-    private Position enPassantPiece;
+    private Position enPassantPiece = new Position();
     public static final int BOARD_SIZE = 8;
 
     public void whiteMovedKing() {
@@ -49,8 +44,8 @@ public class Board {
         this.blackMovedRightRook = true;
     }
 
-    public void setEnPassantSquare(int x, int y) {
-        this.enPassantSquare.updatePosition(x, y);
+    public void setEnPassantPiece(int x, int y) {
+        this.enPassantPiece.updatePosition(x, y);
     }
 
     public Board(String[] testBoard) {
@@ -166,10 +161,15 @@ public class Board {
         }
     }
 
+    /**
+     *
+     * @param move
+     * @return false if not valid
+     */
     public boolean validMove(Move move) {
         Piece destinationPiece = this.getPiece(move.end.x, move.end.y);
         Piece targetPiece = this.getPiece(move.start.x, move.start.y);
-        if (targetPiece == null || targetPiece.color != move.currentPlayer.color) {
+        if (targetPiece == null || targetPiece.getColor() != move.currentPlayer.color) {
             return false;
         }
         switch (move.selectedPiece.getType()){
@@ -177,18 +177,19 @@ public class Board {
                 if(move.end.x == move.start.x) {
                     return destinationPiece == null && !piecesBetweenSquares(move.start.x, move.start.y, move.end.x, move.end.y);
                 } else {
-                    if(destinationPiece != null && destinationPiece.color != targetPiece.color){
+                    if(destinationPiece != null && destinationPiece.getColor() != targetPiece.getColor()){
                         return true;
                     }
-                    if(move.end.x == this.enPassantSquareX && move.end.y == this.enPassantSquareY){
-                        //en passant
+                    if(move.end.x == this.enPassantPiece.x && move.end.y == (move.currentPlayer == Player.One ? this.enPassantPiece.y - 1 : this.enPassantPiece.y + 1)){
+                        this.setPiece(this.enPassantPiece.x, this.enPassantPiece.y, null);
                         return true;
                     }
                 }
+                return false;
             case Rook:
             case Queen:
             case Bishop:
-                return (destinationPiece == null || destinationPiece.color != targetPiece.color) && !piecesBetweenSquares(move.start.x, move.start.y, move.end.x, move.end.y);
+                return (destinationPiece == null || destinationPiece.getColor() != targetPiece.getColor()) && !piecesBetweenSquares(move.start.x, move.start.y, move.end.x, move.end.y);
             case King:
                 if (move.currentPlayer == Player.One && !this.whiteMovedKing && !piecesBetweenSquares(move.start.x, move.start.y, move.end.x, move.end.y)) {
                     if (!this.whiteMovedLeftRook && move.end.x == 0 && move.end.y == 7) {
@@ -206,7 +207,7 @@ public class Board {
                     }
                 }
             case Knight:
-                return destinationPiece == null || destinationPiece.color != targetPiece.color;
+                return destinationPiece == null || destinationPiece.getColor() != targetPiece.getColor();
             default:
                 return false;
         }
@@ -266,6 +267,9 @@ public class Board {
     }
 
     private boolean simulateMove(Move move){
+        if(Math.min(move.end.x, move.end.y) < 0 || Math.max(move.end.x, move.end.y) > 7){
+            return false; // TODO: this should prob be in move.possibleMovement
+        }
         if(!move.possibleMovement() || !this.validMove(move)){
             return false;
         }
@@ -327,7 +331,7 @@ public class Board {
         this.setPiece(move.end.x, move.end.y, movingPiece);
         Piece takenPiece = this.getPiece(move.end.x, move.end.y);
         this.setPiece(move.start.x, move.start.y, null);
-        if(movingPiece.type == Piece.Type.King){
+        if(movingPiece.getType() == Piece.Type.King){
             if(move.currentPlayer == Player.One){
                 this.whiteKing.updatePosition(move.end.x, move.end.y);
             } else {
@@ -339,7 +343,7 @@ public class Board {
         if(movedIntoCheck){
             this.setPiece(move.start.x, move.start.y, movingPiece);
             this.setPiece(move.end.x, move.end.y,takenPiece);
-            if(movingPiece.type == Piece.Type.King){
+            if(movingPiece.getType() == Piece.Type.King){
                 if(move.currentPlayer == Player.One){
                     this.whiteKing.updatePosition(move.start.x, move.start.y);
                 } else {
@@ -356,7 +360,7 @@ public class Board {
         }
         this.setPiece(move.start.x, move.start.y, movingPiece);
         this.setPiece(move.end.x, move.end.y,takenPiece);
-        if(movingPiece.type == Piece.Type.King){
+        if(movingPiece.getType() == Piece.Type.King){
             if(move.currentPlayer == Player.One){
                 this.whiteKing.updatePosition(move.start.x, move.start.y);
             } else {
@@ -380,7 +384,7 @@ public class Board {
         for(int y = 0; y < 8; y++){
             for(int x = 0; x < 8; x++){
                 Piece currentPiece = this.getPiece(x, y);
-                if(currentPiece == null || currentPiece.color == player.color){
+                if(currentPiece == null || currentPiece.getColor() == player.color){
                     continue;
                 }
                 Move testMove = new Move(x, y, king.x, king.y, currentPiece, otherPlayer);
@@ -398,6 +402,47 @@ public class Board {
             return false;
         }
 
+        for(int y = 0; y < 8; y++){
+            for(int x = 0; x < 8; x++){
+                Piece currentPiece = this.getPiece(x, y);
+                if(currentPiece == null || currentPiece.getColor() != player.color){
+                    continue;
+                }
+                switch(currentPiece.getType()){
+                    case King:
+                        if(simulateMove(new Move(x, y, x - 1, y + 1, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x - 1, y, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x - 1, y - 1, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x + 1, y + 1, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x + 1, y, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x + 1, y - 1, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x, y + 1, currentPiece, player)) ||
+                                simulateMove(new Move(x, y, x, y - 1, currentPiece, player))){
+                            return false;
+                        }
+                        break;
+                    case Queen:
+                        break;
+                    case Rook:
+                        for(int a = 0; a < 8; a++){
+                            if(simulateMove(new Move(x, y, x, a, currentPiece, player)) || simulateMove(new Move(x, y, a, y, currentPiece, player))){
+                                return false;
+                            }
+                        }
+                        break;
+                    case Bishop:
+                        for(int i = 1; x + i < 8 && y + i < 8; i++){
+                            System.out.println(getNotation(x + i, y + i));
+//                            new Move(x, y, x + i, y + i, currentPiece, player);
+                        }
+                        break;
+                    case Knight:
+                        break;
+                    case Pawn:
+                        
+                }
+            }
+        }
         //TODO Check if player has any legal moves
         return false;
     }

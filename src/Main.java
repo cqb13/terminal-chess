@@ -4,11 +4,11 @@ public class Main {
   public static void main(String[] args) {
     welcome();
     String[] testState = {
-            "rnbqkbnr",
-            "pppppppp",
+            "rnbqk nr",
+            "pppppPpp",
             "        ",
             "        ",
-            "    p   ",
+            "        ",
             "        ",
             "PPPPPPPP",
             "RNBQKBNR"};

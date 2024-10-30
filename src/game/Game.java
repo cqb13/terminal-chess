@@ -1,8 +1,10 @@
 package game;
 
 import chessNotation.ChessNotation;
+import game.Player;
 import chessNotation.Move;
 import game.board.Board;
+import game.board.Color;
 import game.board.Piece;
 import utils.Result;
 
@@ -36,10 +38,17 @@ public class Game {
             if(this.board.movePiece(move)) {
                 //clear console
                 this.board.printBoard();
+//                this.board.isStalemate(this.currentPlayer);
                 if (this.currentPlayer == Player.One) {
                     this.currentPlayer = Player.Two;
                 } else {
                     this.currentPlayer = Player.One;
+                }
+
+                if (move.selectedPiece.getType() == Piece.Type.Pawn && (move.end.y == 7 || move.end.y == 0)) {
+                    //TODO: promoting options, select a piece if valid set color and replace pawn with piece, calculate checks after
+                    //Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);
+                    //board.setPiece(move.end.x, move.end.y, piece);
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.King) {
@@ -51,7 +60,7 @@ public class Game {
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && Math.abs(move.end.y - move.start.y) == 2) {
-                    board.setEnPassantSquare(move.end.x, move.end.y);
+                    board.setEnPassantPiece(move.end.x, move.end.y);
                 }
 
                 // Checks if a rook is moved from its starting location
@@ -84,8 +93,12 @@ public class Game {
         }
     }
 
-    public Player getCurrentPlayer() {
-        return currentPlayer;
+    public Piece promotePiece(Color color) {
+        System.out.println("Select a piece to replace the pawn (Q, R, B, N): ");
+        String userInput = input.nextLine();
+        Piece piece = ChessNotation.determinePiece(userInput, color);
+
+        return piece;
     }
 
     public boolean playerWon() {

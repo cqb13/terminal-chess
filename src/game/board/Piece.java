@@ -1,8 +1,8 @@
 package game.board;
 
 public class Piece {
-    public Color color;
-    public Type type;
+    private Color color;
+    private Type type;
 
     public enum Type {
         King ('♚'),
@@ -26,6 +26,8 @@ public class Piece {
     public Type getType() {
         return this.type;
     }
+
+    public Color getColor() {return this.color;}
 
     public Piece(Color color, Type chessPiece) {
         this.color = color;

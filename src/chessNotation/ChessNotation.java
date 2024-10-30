@@ -59,6 +59,10 @@ public class ChessNotation {
       return Result.error("Invalid input: K for king, Q for queen, R for rook, B for bishop, N for knight, P for pawn");
     }
 
+    if (originX == destinationX && originY == destinationY) {
+      return Result.error("Invalid input: a piece must have a destination different from its origin");
+    }
+
     return Result.success(new Move(originX, originY, destinationX, destinationY, selectedPiece, currentPlayer));
   }
 
