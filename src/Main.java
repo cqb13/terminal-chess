@@ -4,8 +4,8 @@ public class Main {
   public static void main(String[] args) {
     welcome();
     String[] testState = {
-            "rnbqk nr",
-            "pppppPpp",
+            "rnbqkbnr",
+            "pppppppp",
             "        ",
             "        ",
             "        ",

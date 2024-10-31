@@ -1,7 +1,6 @@
 package game;
 
 import chessNotation.ChessNotation;
-import game.Player;
 import chessNotation.Move;
 import game.board.Board;
 import game.board.Color;
@@ -38,7 +37,7 @@ public class Game {
             if(this.board.movePiece(move)) {
                 //clear console
                 this.board.printBoard();
-//                this.board.isStalemate(this.currentPlayer);
+                this.board.isStalemate(this.currentPlayer);
                 if (this.currentPlayer == Player.One) {
                     this.currentPlayer = Player.Two;
                 } else {
@@ -46,37 +45,37 @@ public class Game {
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && (move.end.y == 7 || move.end.y == 0)) {
-                    //TODO: promoting options, select a piece if valid set color and replace pawn with piece, calculate checks after
-                    //Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);
-                    //board.setPiece(move.end.x, move.end.y, piece);
+                    Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);
+                    this.board.setPiece(move.end.x, move.end.y, piece);
+                    this.board.printBoard();
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.King) {
                     if (move.currentPlayer == Player.One) {
-                        board.whiteMovedKing();
+                        this.board.whiteMovedKing();
                     } else if (move.currentPlayer == Player.Two) {
-                        board.blackMovedKing();
+                        this.board.blackMovedKing();
                     }
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && Math.abs(move.end.y - move.start.y) == 2) {
-                    board.setEnPassantPiece(move.end.x, move.end.y);
+                    this.board.setEnPassantPiece(move.end.x, move.end.y);
                 }
 
                 // Checks if a rook is moved from its starting location
                 if (move.currentPlayer == Player.One && move.selectedPiece.getType() == Piece.Type.Rook) {
                     if (move.start.x == 0 && move.start.y == 7) {
-                        board.whiteMovedLeftRook();
+                        this.board.whiteMovedLeftRook();
                     } else if (move.start.x == 7 && move.start.y == 7) {
-                        board.whiteMovedRightRook();
+                        this.board.whiteMovedRightRook();
                     }
                 }
 
                 if (move.currentPlayer == Player.Two && move.selectedPiece.getType() == Piece.Type.Rook) {
                     if (move.start.x == 0 && move.start.y == 0) {
-                        board.blackMovedLeftRook();
+                        this.board.blackMovedLeftRook();
                     } else if (move.start.x == 7 && move.start.y == 0) {
-                        board.blackMovedRightRook();
+                        this.board.blackMovedRightRook();
                     }
                 }
             } else {
@@ -97,6 +96,10 @@ public class Game {
         System.out.println("Select a piece to replace the pawn (Q, R, B, N): ");
         String userInput = input.nextLine();
         Piece piece = ChessNotation.determinePiece(userInput, color);
+
+        if (piece == null || piece.getType() == Piece.Type.King || piece.getType() == Piece.Type.Pawn) {
+            piece = promotePiece(color);
+        }
 
         return piece;
     }
