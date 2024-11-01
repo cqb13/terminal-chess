@@ -5,10 +5,10 @@ public class Main {
     welcome();
     String[] testState = {
             "rnbqkbnr",
-            "pppppppp",
+            "ppppp  p",
             "        ",
-            "        ",
-            "        ",
+            "     R  ",
+            "      Q ",
             "        ",
             "PPPPPPPP",
             "RNBQKBNR"};

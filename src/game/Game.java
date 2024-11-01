@@ -43,6 +43,7 @@ public class Game {
                 } else {
                     this.currentPlayer = Player.One;
                 }
+                System.out.println(this.board.isCheckMate(this.currentPlayer));
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && (move.end.y == 7 || move.end.y == 0)) {
                     Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);

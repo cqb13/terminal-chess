@@ -396,51 +396,55 @@ public class Board {
         return false;
     }
 
-    //TODO: modify this for checkmates
     public boolean isStalemate(Player player) {
-        if (isCheck(player)) {
-            return false;
-        }
+        return !isCheck(player) && noValidMoves(player);
+    }
 
-        for(int y = 0; y < 8; y++){
-            for(int x = 0; x < 8; x++){
+    public boolean isCheckMate(Player player) {
+        return isCheck(player) && noValidMoves(player);
+    }
+
+    private boolean noValidMoves(Player player) {
+        for(int y = 0; y < BOARD_SIZE; y++){
+            for(int x = 0; x < BOARD_SIZE; x++){
                 Piece currentPiece = this.getPiece(x, y);
                 if(currentPiece == null || currentPiece.getColor() != player.color){
                     continue;
                 }
                 switch(currentPiece.getType()){
                     case King:
-                        if(simulateMove(new Move(x, y, x - 1, y + 1, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x - 1, y, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x - 1, y - 1, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x + 1, y + 1, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x + 1, y, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x + 1, y - 1, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x, y + 1, currentPiece, player)) ||
-                                simulateMove(new Move(x, y, x, y - 1, currentPiece, player))){
-                            return false;
-                        }
-                        break;
-                    case Queen:
-                        break;
                     case Rook:
-                        for (int a = 0; a < 8; a++) {
+                        for (int a = 0; a < BOARD_SIZE; a++) {
                             if (simulateMove(new Move(x, y, x, a, currentPiece, player)) || simulateMove(new Move(x, y, a, y, currentPiece, player))) {
                                 return false;
                             }
                         }
                         break;
-                    case Bishop:
-                        break;
+                    case Queen:
                     case Knight:
-                        break;
                     case Pawn:
-                        
+                    case Bishop://todo: this
+                        // try to move the piece to every square on the board
+                        for (int otherY = 0; otherY < BOARD_SIZE; otherY++) {
+                            for (int otherX = 0; otherX < BOARD_SIZE; otherX++) {
+                                Piece piece = this.getPiece(otherX, otherY);
+                                Color color = (Player.One == player) ? Color.White : Color.Black;
+                                if (piece != null && piece.getColor() == color) {
+                                    continue;
+                                }
+
+                                System.out.print(getNotation(x, y) + getNotation(otherX, otherY));
+
+                                if (simulateMove(new Move(x, y, otherX, otherY, currentPiece, player))) {
+                                    return false;
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
-        //TODO Check if player has any legal moves
-        return false;
+        return true;
     }
 
     public void printBoard()
