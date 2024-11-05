@@ -1,4 +1,5 @@
 import game.Game;
+import game.GameEnding;
 
 public class Main {
   public static void main(String[] args) {
@@ -13,13 +14,26 @@ public class Main {
             "PPPPPPPP",
             "RNBQKBNR"};
     Game game = new Game(testState);
-    game.display();
+    game.display(false);
 
-    while (!game.playerWon()) {
-      game.takeTurn();
+    GameEnding endingState = GameEnding.None;
+
+    while (endingState == GameEnding.None) {
+      endingState = game.takeTurn();
+
+      switch (endingState) {
+        case GameEnding.WhiteWon:
+          System.out.println("White won the game!");
+          break;
+        case GameEnding.BlackWon:
+          System.out.println("Black won the game!");
+          break;
+        case GameEnding.Draw:
+          System.out.println("The game ending in a draw!");
+          break;
+        case GameEnding.None:
+      }
     }
-
-
   }
 
   public static void welcome() {

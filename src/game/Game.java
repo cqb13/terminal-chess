@@ -26,7 +26,7 @@ public class Game {
         this.input = new Scanner(System.in);
     }
 
-    public void takeTurn() {
+    public GameEnding takeTurn() {
         String userInput = input.nextLine();
 
         Result<Move> result = ChessNotation.getMovePosition(userInput, currentPlayer);
@@ -35,20 +35,31 @@ public class Game {
             Move move = result.getValue();
             boolean possible = move.possibleMovement();
             if(this.board.movePiece(move)) {
-                //clear console
-                this.board.printBoard();
-                this.board.isStalemate(this.currentPlayer);
+                this.display(true);
                 if (this.currentPlayer == Player.One) {
                     this.currentPlayer = Player.Two;
                 } else {
                     this.currentPlayer = Player.One;
                 }
-                System.out.println(this.board.isCheckMate(this.currentPlayer));
+                boolean stalemate = this.board.isStalemate(this.currentPlayer);
+                boolean checkmate = this.board.isCheckMate(this.currentPlayer);
+
+                if (stalemate) {
+                    return GameEnding.Draw;
+                }
+
+                if (checkmate) {
+                    if (this.currentPlayer == Player.Two) {
+                        return GameEnding.WhiteWon;
+                    } else {
+                        return GameEnding.BlackWon;
+                    }
+                }
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && (move.end.y == 7 || move.end.y == 0)) {
                     Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);
                     this.board.setPiece(move.end.x, move.end.y, piece);
-                    this.board.printBoard();
+                    this.display(true);
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.King) {
@@ -80,17 +91,15 @@ public class Game {
                     }
                 }
             } else {
-                System.out.println("failed to move");
-                if(!possible){
-                    System.out.println("not possible");
-                }
-                if(!this.board.validMove(move)){
+                if(!this.board.validMove(move) || !possible){
                     System.out.println("invalid move");
                 }
             }
         } else {
             System.out.println("Error: " + result.getErrorMessage());
         }
+
+        return GameEnding.None;
     }
 
     public Piece promotePiece(Color color) {
@@ -105,11 +114,12 @@ public class Game {
         return piece;
     }
 
-    public boolean playerWon() {
-        return this.board.playerWon();
-    }
-
-    public void display() {
+    public void display(boolean clearConsole) {
+        if(clearConsole) {
+//            System.out.print("\033[H\033[2J");
+//            System.out.flush();
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        }
         this.board.printBoard();
     }
 }

@@ -138,10 +138,6 @@ public class Board {
         return true;
     }
 
-    public boolean playerWon() {
-        return false;
-    }
-
     private Piece getPiece(int x, int y) {
         return board[y][x].piece;
     }
@@ -162,9 +158,6 @@ public class Board {
     }
 
     private boolean simulateMove(Move move) {
-        if(Math.min(move.end.x, move.end.y) < 0 || Math.max(move.end.x, move.end.y) > 7){
-            return false; // TODO: this should prob be in move.possibleMovement
-        }
         if(!move.possibleMovement() || !this.validMove(move)){
             return false;
         }
@@ -411,8 +404,7 @@ public class Board {
                 if(currentPiece == null || currentPiece.getColor() != player.color){
                     continue;
                 }
-                switch(currentPiece.getType()){
-                    case King:
+                switch(currentPiece.getType()){ //TODO: draw problems (Qg4 f3)
                     case Rook:
                         for (int a = 0; a < BOARD_SIZE; a++) {
                             if (simulateMove(new Move(x, y, x, a, currentPiece, player)) || simulateMove(new Move(x, y, a, y, currentPiece, player))) {
@@ -420,20 +412,19 @@ public class Board {
                             }
                         }
                         break;
+                    case King:
                     case Queen:
                     case Knight:
                     case Pawn:
-                    case Bishop://todo: this
+                    case Bishop:
                         // try to move the piece to every square on the board
                         for (int otherY = 0; otherY < BOARD_SIZE; otherY++) {
                             for (int otherX = 0; otherX < BOARD_SIZE; otherX++) {
                                 Piece piece = this.getPiece(otherX, otherY);
                                 Color color = (Player.One == player) ? Color.White : Color.Black;
-                                if (piece != null && piece.getColor() == color) {
+                                if (piece == null || piece.getColor() == color) {
                                     continue;
                                 }
-
-                                System.out.print(getNotation(x, y) + getNotation(otherX, otherY));
 
                                 if (simulateMove(new Move(x, y, otherX, otherY, currentPiece, player))) {
                                     return false;
@@ -449,8 +440,6 @@ public class Board {
 
     public void printBoard()
     {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
         final String BLACK_BG = "\u001B[42m";
         final String WHITE_BG = "\u001B[103m";
         final String RESET = "\u001B[0m";
