@@ -216,8 +216,8 @@ public class Board {
         }
 
         Piece movingPiece = this.getPiece(move.start.x, move.start.y);
-        this.setPiece(move.end.x, move.end.y, movingPiece);
         Piece takenPiece = this.getPiece(move.end.x, move.end.y);
+        this.setPiece(move.end.x, move.end.y, movingPiece);
         this.setPiece(move.start.x, move.start.y, null);
         if(movingPiece.getType() == Piece.Type.King){
             if(move.currentPlayer == Player.One){
@@ -422,7 +422,7 @@ public class Board {
                             for (int otherX = 0; otherX < BOARD_SIZE; otherX++) {
                                 Piece piece = this.getPiece(otherX, otherY);
                                 Color color = (Player.One == player) ? Color.White : Color.Black;
-                                if (piece == null || piece.getColor() == color) {
+                                if (piece != null && piece.getColor() == color) {
                                     continue;
                                 }
 
@@ -438,8 +438,7 @@ public class Board {
         return true;
     }
 
-    public void printBoard()
-    {
+    public void printBoard() {
         final String BLACK_BG = "\u001B[42m";
         final String WHITE_BG = "\u001B[103m";
         final String RESET = "\u001B[0m";

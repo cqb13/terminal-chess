@@ -5,14 +5,14 @@ public class Main {
   public static void main(String[] args) {
     welcome();
     String[] testState = {
-            "rnbqkbnr",
-            "ppppp  p",
+            "k       ",
+            " R      ",
             "        ",
-            "     R  ",
-            "      Q ",
+            " K     Q",
             "        ",
-            "PPPPPPPP",
-            "RNBQKBNR"};
+            "        ",
+            "        ",
+            "        "};
     Game game = new Game(testState);
     game.display(false);
 
