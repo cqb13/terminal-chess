@@ -8,7 +8,7 @@ public class ChessNotation {
   /**
    * Our notation format
    * move from move to
-   * [piece][letter][number] -> [letter][number]
+   * [piece][letter][number] [letter][number]
    *
    * valid pieces:
    *  - K for king

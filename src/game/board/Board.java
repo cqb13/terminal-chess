@@ -20,6 +20,16 @@ public class Board {
     private Position enPassantPiece = new Position();
     public static final int BOARD_SIZE = 8;
 
+    public Player getChecked() {
+        if (this.whiteInCheck) {
+            return Player.One;
+        } else if (this.blackInCheck) {
+            return Player.Two;
+        } else {
+            return null;
+        }
+    }
+
     public void whiteMovedKing() {
         this.whiteMovedKing = true;
     }
@@ -404,7 +414,7 @@ public class Board {
                 if(currentPiece == null || currentPiece.getColor() != player.color){
                     continue;
                 }
-                switch(currentPiece.getType()){ //TODO: draw problems (Qg4 f3)
+                switch(currentPiece.getType()){
                     case Rook:
                         for (int a = 0; a < BOARD_SIZE; a++) {
                             if (simulateMove(new Move(x, y, x, a, currentPiece, player)) || simulateMove(new Move(x, y, a, y, currentPiece, player))) {

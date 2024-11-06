@@ -11,23 +11,25 @@ import java.util.Scanner;
 
 public class Game {
     private Player currentPlayer = Player.One;
-
     private final Board board;
     private final Scanner input;
+    private String consoleMessages;
 
     public Game(String[] testBoard) {
         this.board = new Board(testBoard);
         this.input = new Scanner(System.in);
+        this.consoleMessages = "";
     }
-
 
     public Game() {
         this.board = new Board();
         this.input = new Scanner(System.in);
+        this.consoleMessages = "";
     }
 
     public GameEnding takeTurn() {
         String userInput = input.nextLine();
+        GameEnding gameEnding = GameEnding.None;
 
         Result<Move> result = ChessNotation.getMovePosition(userInput, currentPlayer);
 
@@ -41,25 +43,14 @@ public class Game {
                 } else {
                     this.currentPlayer = Player.One;
                 }
-                boolean stalemate = this.board.isStalemate(this.currentPlayer);
-                boolean checkmate = this.board.isCheckMate(this.currentPlayer);
 
-                if (stalemate) {
-                    return GameEnding.Draw;
-                }
-
-                if (checkmate) {
-                    if (this.currentPlayer == Player.Two) {
-                        return GameEnding.WhiteWon;
-                    } else {
-                        return GameEnding.BlackWon;
-                    }
-                }
+                gameEnding = checkForEnding();
 
                 if (move.selectedPiece.getType() == Piece.Type.Pawn && (move.end.y == 7 || move.end.y == 0)) {
                     Piece piece = promotePiece((move.currentPlayer == Player.One) ? Color.White : Color.Black);
                     this.board.setPiece(move.end.x, move.end.y, piece);
                     this.display(true);
+                    gameEnding = checkForEnding();
                 }
 
                 if (move.selectedPiece.getType() == Piece.Type.King) {
@@ -99,10 +90,33 @@ public class Game {
             System.out.println("Error: " + result.getErrorMessage());
         }
 
+        return gameEnding;
+    }
+
+    public Player getChecked() {
+        return board.getChecked();
+    }
+
+    private GameEnding checkForEnding() {
+        boolean stalemate = this.board.isStalemate(this.currentPlayer);
+        boolean checkmate = this.board.isCheckMate(this.currentPlayer);
+
+        if (stalemate) {
+            return GameEnding.Draw;
+        }
+
+        if (checkmate) {
+            if (this.currentPlayer == Player.Two) {
+                return GameEnding.WhiteWon;
+            } else {
+                return GameEnding.BlackWon;
+            }
+        }
+
         return GameEnding.None;
     }
 
-    public Piece promotePiece(Color color) {
+    private Piece promotePiece(Color color) {
         System.out.println("Select a piece to replace the pawn (Q, R, B, N): ");
         String userInput = input.nextLine();
         Piece piece = ChessNotation.determinePiece(userInput, color);
@@ -114,12 +128,18 @@ public class Game {
         return piece;
     }
 
+    public void addConsoleMessage(String message){
+        consoleMessages += message + "\n";
+    }
+
     public void display(boolean clearConsole) {
         if(clearConsole) {
-//            System.out.print("\033[H\033[2J");
-//            System.out.flush();
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+//            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         }
         this.board.printBoard();
+        System.out.print(consoleMessages);
+        consoleMessages = "";
     }
 }
