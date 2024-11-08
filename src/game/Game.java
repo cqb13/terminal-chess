@@ -10,21 +10,14 @@ import utils.Result;
 import java.util.Scanner;
 
 public class Game {
-    private Player currentPlayer = Player.One;
+    private Player currentPlayer;
     private final Board board;
     private final Scanner input;
-    private String consoleMessages;
-
-    public Game(String[] testBoard) {
-        this.board = new Board(testBoard);
-        this.input = new Scanner(System.in);
-        this.consoleMessages = "";
-    }
 
     public Game() {
+        currentPlayer = Player.One;
         this.board = new Board();
         this.input = new Scanner(System.in);
-        this.consoleMessages = "";
     }
 
     public GameEnding takeTurn() {
@@ -128,10 +121,6 @@ public class Game {
         return piece;
     }
 
-    public void addConsoleMessage(String message){
-        consoleMessages += message + "\n";
-    }
-
     public void display(boolean clearConsole) {
         if(clearConsole) {
             System.out.print("\033[H\033[2J");
@@ -139,7 +128,5 @@ public class Game {
 //            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         }
         this.board.printBoard();
-        System.out.print(consoleMessages);
-        consoleMessages = "";
     }
 }

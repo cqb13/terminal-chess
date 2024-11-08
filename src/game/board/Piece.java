@@ -1,8 +1,8 @@
 package game.board;
 
 public class Piece {
-    private Color color;
-    private Type type;
+    private final Color color;
+    private final Type type;
 
     public enum Type {
         King ('♚'),

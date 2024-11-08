@@ -9,7 +9,7 @@ public class ChessNotation {
    * Our notation format
    * move from move to
    * [piece][letter][number] [letter][number]
-   *
+   * <p>
    * valid pieces:
    *  - K for king
    *  - Q for queen
@@ -17,10 +17,10 @@ public class ChessNotation {
    *  - B for bishop
    *  - N for knight
    *  - P for pawn
-   *
+   * <p>
    * valid letters:
    *  - a...h = 0...7
-   *
+   * <p>
    * valid numbers:
    *  - 1...8 = 0...7
    */

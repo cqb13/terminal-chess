@@ -1,24 +1,57 @@
 package game.board;
 
-import chessNotation.ChessNotation;
 import chessNotation.Move;
 import chessNotation.Position;
 import game.Player;
 
 public class Board {
-    private final Square[][] board;
     private final Position whiteKing = new Position(4, 7);
     private final Position blackKing = new Position(4, 0);
-    private boolean whiteMovedKing = false;
-    private boolean whiteMovedLeftRook = false;
-    private boolean whiteMovedRightRook = false;
-    private boolean blackMovedKing = false;
-    private boolean blackMovedLeftRook = false;
-    private boolean blackMovedRightRook = false;
-    private boolean whiteInCheck = false;
-    private boolean blackInCheck = false;
-    private Position enPassantPiece = new Position();
     public static final int BOARD_SIZE = 8;
+    private final Position enPassantPiece;
+    private final Square[][] board;
+    private boolean whiteMovedKing;
+    private boolean whiteMovedLeftRook;
+    private boolean whiteMovedRightRook;
+    private boolean blackMovedKing;
+    private boolean blackMovedLeftRook;
+    private boolean blackMovedRightRook;
+    private boolean whiteInCheck;
+    private boolean blackInCheck;
+
+    public Board() {
+        whiteMovedKing = false;
+        whiteMovedLeftRook = false;
+        whiteMovedRightRook = false;
+        blackMovedKing = false;
+        blackMovedLeftRook = false;
+        blackMovedRightRook = false;
+        whiteInCheck = false;
+        blackInCheck = false;
+        enPassantPiece = new Position();
+        this.board = new Square[8][8];
+
+        for (int y = 0; y < BOARD_SIZE; y++) {
+            for (int x = 0; x < BOARD_SIZE; x++) {
+                this.board[y][x] = new Square();
+            }
+            if (y == 0) {
+                for (int x = 0; x < BOARD_SIZE; x++) {
+                    this.populateRow(Color.Black, 0);
+                }
+            } else if (y == 1) {
+                for (int x = 0; x < BOARD_SIZE; x++) {
+                    this.setPiece(x, y, new Piece(Color.Black, Piece.Type.Pawn));
+                }
+            } else if (y == 6) {
+                for (int x = 0; x < BOARD_SIZE; x++) {
+                    this.setPiece(x, y, new Piece(Color.White, Piece.Type.Pawn));
+                }
+            } else if (y == 7) {
+                this.populateRow(Color.White, 7);
+            }
+        }
+    }
 
     public Player getChecked() {
         if (this.whiteInCheck) {
@@ -58,45 +91,6 @@ public class Board {
         this.enPassantPiece.updatePosition(x, y);
     }
 
-    public Board(String[] testBoard) {
-        this.board = new Square[8][8];
-        for (int y = 0; y < BOARD_SIZE; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                this.board[y][x] = new Square();
-                char piece = testBoard[y].charAt(x);
-                if(Character.isUpperCase(piece)){
-                    this.setPiece(x, y, ChessNotation.determinePiece("" + piece, Color.White));
-                } else {
-                    this.setPiece(x, y, ChessNotation.determinePiece("" + Character.toUpperCase(piece), Color.Black));
-                }
-            }
-        }
-    }
-
-    public Board() {
-        this.board = new Square[8][8];
-
-        for (int y = 0; y < BOARD_SIZE; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                this.board[y][x] = new Square();
-            }
-            if (y == 0) {
-                for (int x = 0; x < BOARD_SIZE; x++) {
-                    this.populateRow(Color.Black, 0);
-                }
-            } else if (y == 1) {
-                for (int x = 0; x < BOARD_SIZE; x++) {
-                    this.setPiece(x, y, new Piece(Color.Black, Piece.Type.Pawn));
-                }
-            } else if (y == 6) {
-                for (int x = 0; x < BOARD_SIZE; x++) {
-                    this.setPiece(x, y, new Piece(Color.White, Piece.Type.Pawn));
-                }
-            } else if (y == 7) {
-                this.populateRow(Color.White, 7);
-            }
-        }
-    }
 
     private void populateRow(Color color, int row) {
         for (int x = 0; x < BOARD_SIZE; x++) {
@@ -268,11 +262,6 @@ public class Board {
         return true;
     }
 
-    /**
-     *
-     * @param move
-     * @return false if not valid
-     */
     public boolean validMove(Move move) {
         Piece destinationPiece = this.getPiece(move.end.x, move.end.y);
         Piece targetPiece = this.getPiece(move.start.x, move.start.y);
@@ -452,22 +441,19 @@ public class Board {
         final String BLACK_BG = "\u001B[42m";
         final String WHITE_BG = "\u001B[103m";
         final String RESET = "\u001B[0m";
+        System.out.println("   a  b  c  d  e  f  g  h");
         for(int i = 0; i < 4; i++){
             System.out.print(8 - i * 2 + " ");
             for(int j = 0; j < 4; j++){
                 System.out.print(WHITE_BG + ' ' + this.board[i * 2][j * 2].toStr() + ' ' + BLACK_BG + ' ' + this.board[i * 2][j * 2 + 1].toStr() + ' ');
             }
-            System.out.println(RESET);
+            System.out.println(RESET + " " + (8 - i * 2));
             System.out.print(7 - i * 2 + " ");
             for(int j = 0; j < 4; j++){
                 System.out.print(BLACK_BG + ' ' + this.board[i * 2 + 1][j * 2].toStr() + ' ' + WHITE_BG + ' ' + this.board[i * 2 + 1][j * 2 + 1].toStr() + ' ');
             }
-            System.out.println(RESET);
+            System.out.println(RESET + " " + (7 - i * 2));
         }
         System.out.println("   a  b  c  d  e  f  g  h");
-    }
-
-    public String getNotation(int x, int y){
-        return new String[]{"a", "b", "c", "d", "e", "f", "g", "h"}[x] + (8 - y);
     }
 }

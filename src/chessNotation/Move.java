@@ -124,9 +124,8 @@ public class Move {
     public boolean isCastling() {
         if (this.currentPlayer == Player.One && this.start.x == 4 && this.start.y == 7 && this.end.y == 7 && (this.end.x == 0 || this.end.x == 7)) {
             return true;
-        } else if (this.currentPlayer == Player.Two && this.start.x == 4 && this.start.y == 0 && this.end.y == 0 && (this.end.x == 0 || this.end.x == 7)) {
-            return true;
+        } else {
+            return this.currentPlayer == Player.Two && this.start.x == 4 && this.start.y == 0 && this.end.y == 0 && (this.end.x == 0 || this.end.x == 7);
         }
-        return false;
     }
 }
